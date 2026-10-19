@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#244b3e">
+    <title th:text="${editMode ? 'Edit book · Library Desk' : 'Add book · Library Desk'}">Add book · Library Desk</title>
+    <link rel="stylesheet" th:href="@{/css/library.css}">
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to book form</a>
+<div class="site-shell">
+    <header class="site-header">
+        <a class="brand" th:href="@{/books}" aria-label="Library Desk home">
+            <span class="brand-mark" aria-hidden="true">LD</span>
+            <span>Library Desk</span>
+        </a>
+        <span class="header-note">A place for every book</span>
+    </header>
+
+    <main id="main-content" class="form-main">
+        <a class="back-link" th:href="@{/books}"><span aria-hidden="true">←</span> Back to collection</a>
+        <section class="form-layout" aria-labelledby="page-title">
+            <div class="form-intro">
+                <p class="eyebrow" th:text="${editMode ? 'Refine your collection' : 'Grow your collection'}">Grow your collection</p>
+                <h1 id="page-title" th:text="${editMode ? 'A little revision.' : 'Make room for one more.'}">Make room for one more.</h1>
+                <p class="page-description" th:text="${editMode ? 'Update the details or mark a book as borrowed. Every good collection deserves a little care.' : 'Start with the essentials. A title, an author, and a place on your shelf.'}">Start with the essentials. A title, an author, and a place on your shelf.</p>
+                <div class="form-note">
+                    <span class="eyebrow">The essentials</span>
+                    <p>All fields are required. You can come back and edit these details at any time.</p>
+                </div>
+            </div>
+
+            <div class="form-panel">
+                <div class="panel-heading">
+                    <h2 th:text="${editMode ? 'Book details' : 'New book'}">New book</h2>
+                    <span class="small-label">Library record</span>
+                </div>
+                <form class="book-form" method="post" th:object="${book}"
+                      th:action="${editMode} ? @{/books/{id}(id=${book.id})} : @{/books}">
+                    <div class="notice notice-error" role="alert" th:if="${#fields.hasErrors('*')}">
+                        <strong>A few details need attention.</strong>
+                        <p>Please check the highlighted fields below.</p>
+                        <p th:each="error : ${#fields.globalErrors()}" th:text="${error}"></p>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="title">Book title</label>
+                        <input type="text" id="title" th:field="*{title}" maxlength="120" required
+                               placeholder="e.g. Pride and Prejudice" th:classappend="${#fields.hasErrors('title')} ? 'input-error'"
+                               th:attr="aria-invalid=${#fields.hasErrors('title')},aria-describedby=${#fields.hasErrors('title') ? 'title-help title-error' : 'title-help'}">
+                        <p id="title-help" class="field-help">Use the title as it appears on the cover.</p>
+                        <p id="title-error" class="field-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="author">Author</label>
+                        <input type="text" id="author" th:field="*{author}" maxlength="120" required
+                               placeholder="e.g. Jane Austen" th:classappend="${#fields.hasErrors('author')} ? 'input-error'"
+                               th:attr="aria-invalid=${#fields.hasErrors('author')},aria-describedby=${#fields.hasErrors('author') ? 'author-error' : null}">
+                        <p id="author-error" class="field-error" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></p>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="publicationYear">Publication year</label>
+                            <input type="number" id="publicationYear" th:field="*{publicationYear}" min="1" max="2100" required
+                                   placeholder="e.g. 1813" th:classappend="${#fields.hasErrors('publicationYear')} ? 'input-error'"
+                                   th:attr="aria-invalid=${#fields.hasErrors('publicationYear')},aria-describedby=${#fields.hasErrors('publicationYear') ? 'year-help year-error' : 'year-help'}">
+                            <p id="year-help" class="field-help">A year from 1 to 2100.</p>
+                            <p id="year-error" class="field-error" th:if="${#fields.hasErrors('publicationYear')}" th:errors="*{publicationYear}"></p>
+                        </div>
+                        <div class="field-group">
+                            <label for="status">Availability</label>
+                            <select id="status" th:field="*{status}" required th:classappend="${#fields.hasErrors('status')} ? 'input-error'"
+                                    th:attr="aria-invalid=${#fields.hasErrors('status')},aria-describedby=${#fields.hasErrors('status') ? 'status-error' : null}">
+                                <option value="">Choose status</option>
+                                <option th:each="status : ${statuses}" th:value="${status}" th:text="${status.name() == 'AVAILABLE' ? 'Available' : 'Borrowed'}">Available</option>
+                            </select>
+                            <p id="status-error" class="field-error" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a class="button button-secondary" th:href="@{/books}">Cancel</a>
+                        <button type="submit" class="button button-primary" th:text="${editMode ? 'Save changes' : 'Add book'}">Add book</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>Library Desk <span aria-hidden="true">/</span> Keep a little room for a good book.</p>
+        <span class="footer-label">Your collection, considered.</span>
+    </footer>
+</div>
+</body>
+</html>

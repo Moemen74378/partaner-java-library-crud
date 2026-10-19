@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#244b3e">
+    <title>Collection · Library Desk</title>
+    <link rel="stylesheet" th:href="@{/css/library.css}">
+    <script th:src="@{/js/library.js}" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to collection</a>
+<div class="site-shell">
+    <header class="site-header">
+        <a class="brand" th:href="@{/books}" aria-label="Library Desk home">
+            <span class="brand-mark" aria-hidden="true">LD</span>
+            <span>Library Desk</span>
+        </a>
+        <span class="header-note">A place for every book</span>
+    </header>
+
+    <main id="main-content">
+        <section class="page-intro" aria-labelledby="page-title">
+            <div>
+                <p class="eyebrow">Your personal collection</p>
+                <h1 id="page-title">The reading room.</h1>
+                <p class="page-description">A thoughtful place to keep track of the books on your shelves.</p>
+            </div>
+            <a class="button button-primary" th:href="@{/books/new}">
+                <span aria-hidden="true">+</span> Add book
+            </a>
+        </section>
+
+        <div class="notice notice-success" role="status" th:if="${message}" th:text="${message}"></div>
+
+        <section class="stats" aria-label="Collection at a glance">
+            <div class="stat">
+                <span class="stat-label">Total books</span>
+                <strong class="stat-value" th:text="${totalBooks}">0</strong>
+                <span class="stat-caption">On your shelves</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label"><span class="status-dot dot-available" aria-hidden="true"></span> Available</span>
+                <strong class="stat-value" th:text="${availableBooks}">0</strong>
+                <span class="stat-caption">Ready for a reader</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label"><span class="status-dot dot-borrowed" aria-hidden="true"></span> Borrowed</span>
+                <strong class="stat-value" th:text="${borrowedBooks}">0</strong>
+                <span class="stat-caption">Out on an adventure</span>
+            </div>
+        </section>
+
+        <section class="collection-panel" aria-labelledby="collection-title">
+            <div class="panel-heading">
+                <h2 id="collection-title">On the shelves</h2>
+                <span class="collection-count" th:text="|${totalBooks} ${totalBooks == 1 ? 'book' : 'books'}|">0 books</span>
+            </div>
+
+            <div class="table-wrapper" th:unless="${#lists.isEmpty(books)}">
+                <table class="books-table">
+                    <caption class="visually-hidden">Your books, with author, publication year, availability, and actions</caption>
+                    <thead>
+                    <tr>
+                        <th scope="col">Book title</th>
+                        <th scope="col">Author</th>
+                        <th scope="col">Year</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="actions-heading">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="book : ${books}">
+                        <th scope="row" class="book-title-cell">
+                            <span class="book-spine" aria-hidden="true"></span>
+                            <span class="book-title" th:text="${book.title}">Book title</span>
+                        </th>
+                        <td data-label="Author" th:text="${book.author}">Author</td>
+                        <td data-label="Year" class="year-cell" th:text="${book.publicationYear}">2026</td>
+                        <td data-label="Status">
+                            <span class="status-badge" th:classappend="${book.status.name() == 'AVAILABLE' ? 'status-available' : 'status-borrowed'}">
+                                <span class="status-dot" aria-hidden="true"></span>
+                                <span th:text="${book.status.name() == 'AVAILABLE' ? 'Available' : 'Borrowed'}">Available</span>
+                            </span>
+                        </td>
+                        <td class="row-actions">
+                            <a class="text-action" th:href="@{/books/{id}/edit(id=${book.id})}" th:attr="aria-label=|Edit ${book.title}|">Edit</a>
+                            <form method="post" th:action="@{/books/{id}/delete(id=${book.id})}" class="delete-form" th:attr="data-book-title=${book.title}">
+                                <button type="submit" class="text-action delete-action" th:attr="aria-label=|Delete ${book.title}|">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="empty-state" th:if="${#lists.isEmpty(books)}">
+                <span class="empty-mark" aria-hidden="true">01</span>
+                <h3>A new chapter starts here.</h3>
+                <p>Add your first book to start building your collection.</p>
+                <a class="button button-primary" th:href="@{/books/new}">Add your first book <span aria-hidden="true">→</span></a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>Library Desk <span aria-hidden="true">/</span> Keep a little room for a good book.</p>
+        <span class="footer-label">Your collection, considered.</span>
+    </footer>
+</div>
+</body>
+</html>
