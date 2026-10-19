@@ -19,7 +19,7 @@ chmod +x mvnw
 ./mvnw spring-boot:run
 ```
 
-Open **http://localhost:8080/books**. Stop the application with **Ctrl+C** in its terminal. If Java is not on PATH, set `JAVA_HOME` to your JDK folder (the folder containing `bin/java`), or run the application from IntelliJ IDEA using its configured JDK.
+Open **http://localhost:8080/books**. Stop the application with **Ctrl+C** in its terminal. If Java is not on PATH, set `JAVA_HOME` to your JDK folder (the folder containing `bin/java`) and add its `bin` directory to PATH, or run the application from IntelliJ IDEA using its configured JDK. In PowerShell, the PATH command is `$env:PATH = "$env:JAVA_HOME\bin;$env:PATH"`.
 
 The application binds to this computer only. It is a classroom application for local use.
 
@@ -53,7 +53,7 @@ Try an empty title or a year outside 1–2100 to see validation. Missing record 
 | `src/test/java/` | Integration tests for CRUD, form validation, and missing records. |
 | `doc/` | Screenshots, evidence notes, and the complete two-student workflow. |
 
-Request flow: **browser → controller → repository → H2 database → Thymeleaf page → browser**. An entity maps a Java object to a database row. Spring Data implements repository methods. The controller decides which operation and page to use. Thymeleaf fills HTML with model values.
+Request flow: **browser → controller → service → repository → H2 database**. The controller supplies the result to a **Thymeleaf page → browser**. An entity maps a Java object to a database row. Spring Data implements repository methods. The service handles database transactions. The controller decides which operation and page to use. Thymeleaf fills HTML with model values.
 
 The assignment offers [Spring's Vaadin CRUD guide](https://spring.io/guides/gs/crud-with-vaadin/) as an optional tutorial. This implementation uses Spring MVC and Thymeleaf for its interface, with the same basic Java/JPA CRUD learning goals.
 
